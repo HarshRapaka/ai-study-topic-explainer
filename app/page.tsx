@@ -30,39 +30,25 @@ export default function Home() {
 
     const data = await res.json();
 
-    setExplanation(data.explanation);
+    // show backend error message instead of generic error
+    if (!res.ok) {
+      setExplanation(data.error || "AI service unavailable.");
+      return;
+    }
+
+    setExplanation(data.explanation || "No explanation returned.");
   } catch (err) {
-    setExplanation("Failed to fetch explanation. Please try again later.");
+    setExplanation("Unable to connect to the AI service.");
   } finally {
     setLoading(false);
   }
-
-    // --- END MOCK ---
-
-    /*
-    // Uncomment when Gemini API key/quota is ready
-    try {
-      const res = await fetch("/api/explain", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ topic: inputTopic }),
-      });
-
-      if (!res.ok) throw new Error("API error");
-
-      const data = await res.json();
-      setExplanation(data.explanation || "No explanation returned");
-    } catch (err) {
-      setExplanation("Failed to fetch explanation. Please try again later.");
-    } finally {
-      setLoading(false);
-    }
-    */
-  };
+};
 
   return (
     <main className="flex flex-col items-center justify-start min-h-screen gap-5 p-6 bg-gray-900 text-white">
-      <h1 className="text-3xl font-bold text-center mt-6">AI Study Topic Explainer</h1>
+      <h1 className="text-3xl font-bold text-center mt-6">
+        AI Study Topic Explainer
+      </h1>
 
       <TopicInput onExplain={handleExplain} />
 
